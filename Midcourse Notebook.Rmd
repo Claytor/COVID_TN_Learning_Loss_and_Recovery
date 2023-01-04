@@ -12,6 +12,7 @@ library(readr)
 library(sf)
 library(stringr)
 library(data.table)
+library(janitor)
 ```
 
 # Import the Data as CSV with readr
@@ -25,5 +26,12 @@ district_2022 <- read_csv("data/district/district_2022.csv")
 # Something kinda funky is going on.  There's a differeing amount of variable data for each column.
 ```{r Combined all datasets into one}
 EOC <- bind_rows(district_2018, district_2019, district_2021, district_2022)
+```
+ 
+# Look at it with the janitor.  It appears as if some of the criteria for mastery have changed over the years.
+Ill have to do some research to see if they are equivalent (Hopefully!)
+```{r}
+groundskeeper_willie <- janitor::compare_df_cols(district_2018, district_2019, district_2021, district_2022)
+groundskeeper_willie
 ```
 
