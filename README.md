@@ -1,4 +1,4 @@
-# COVID_TN_Learning_Loss_and_Recovery
+# COVID: TN Learning Loss and Recovery
 
 ## Executive Summary
 
