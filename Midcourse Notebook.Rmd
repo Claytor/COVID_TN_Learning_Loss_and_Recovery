@@ -1,0 +1,25 @@
+---
+title: "Midcourse Notebook"
+output: html_notebook
+---
+# Import the libraries that we need to make the stuff work.
+```{r Library Imports}
+library(ggplot2)
+library(tidyr)
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(sf)
+library(stringr)
+library(data.table)
+```
+
+# Import the Data as CSV with readr
+```{r .csv imports}
+district_2018 <- read_csv("data/district/district_2018.csv")
+district_2019 <- read_csv("data/district/district_2019.csv")
+district_2021 <- read_csv("data/district/district_2021.csv")
+district_2022 <- read_csv("data/district/district_2022.csv")
+
+```
+
