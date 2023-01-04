@@ -56,4 +56,6 @@ At the current time, my known issues are aligning disparate datasets, Determinin
 
 ## Clatyor's Log
 - 01/03/23
-  - I have a copy of all of my datasets.  I am looking at district-wide data from 2018 - 2022 am in in the process of merging them right now.  I had a chance to speak with Neda about my project.  She reccommended that it would be a good idea to use my readme as a log of sorts.  
+  - I have a copy of all of my datasets.  I am looking at district-wide data from 2018 - 2022 am in in the process of merging them right now.  I had a chance to speak with Neda about my project.  She recommended that it would be a good idea to use my readme as a log of sorts.
+  - Looks like I have some homework.  There are different titles for mastery criteria across datasets.   It appears as if some of the criteria for mastery have changed over the years.
+  - Ill have to do some research to see if they are equivalent (Hopefully!)
