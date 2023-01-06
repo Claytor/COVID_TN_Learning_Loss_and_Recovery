@@ -56,6 +56,16 @@ At the current time, my known issues are aligning disparate datasets, Determinin
 
 ## Clatyor's Log
 - 01/03/23
-  - I have a copy of all of my datasets.  I am looking at district-wide data from 2018 - 2022 am in in the process of merging them right now.  I had a chance to speak with Neda about my project.  She recommended that it would be a good idea to use my readme as a log of sorts.
-  - Looks like I have some homework.  There are different titles for mastery criteria across datasets.   It appears as if some of the criteria for mastery have changed over the years.
-  - Ill have to do some research to see if they are equivalent (Hopefully!)
+    - I have a copy of all of my datasets.  I am looking at district-wide data from 2018 - 2022 am in in the process of merging them right now.  I had a chance to speak with Neda about my project.  She recommended that it would be a good idea to use my readme as a log of sorts.
+    - Looks like I have some homework.  There are different titles for mastery criteria across datasets.   It appears as if some of the criteria for mastery have changed over the years.
+    - Ill have to do some research to see if they are equivalent (Hopefully!)
+- 01/04/23
+    - I need to find out how to merge the correct columns.
+    - How do I find the Increases/Decreases year-over-year for each district?
+- 01/05/23
+    - Michael reccomended that I use the "povit wider funciton"
+    - Conference with Rohit.  Pretty chill dude -awesome hat.  I told him that the feature that I want the most (geospatial mapping for school districts) might be beyond the scope of this project -but would be friggin' sweet!  He said that I could ask for help if I got to that point.
+    - Removed columns not needed for analysis (participation_rate, student_group, enrolled, tested, valid_tests)
+    - Added code to group categorical testing data (grade, subject, test)
+    - I made a google sheet to help track variables.  Still hunting down why the criteria categories 
+    - **dadgumit! There is no student subgroup information for the 2022 assessemnt.  I hope that this doesn't mean that I can show improvement for that year.
