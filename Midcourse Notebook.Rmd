@@ -13,6 +13,7 @@ library(sf)
 library(stringr)
 library(data.table)
 library(janitor)
+library(data.table)
 ```
 
 # Import the Data as CSV with readr
@@ -33,5 +34,17 @@ Ill have to do some research to see if they are equivalent (Hopefully!)
 ```{r}
 groundskeeper_willie <- janitor::compare_df_cols(district_2018, district_2019, district_2021, district_2022)
 groundskeeper_willie
+```
+
+# Dropping Unneeded Columns
+```{r Column remove}
+EOC_Drop <- EOC %>% 
+  select(-c(participation_rate, student_group, enrolled, tested, valid_tests))
+```
+
+#Describing columns
+```{r Categorical Variables}
+dist_assess <- EOC %>% distinct(grade, subject, test)
+
 ```
 
