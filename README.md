@@ -69,3 +69,14 @@ At the current time, my known issues are aligning disparate datasets, Determinin
     - Added code to group categorical testing data (grade, subject, test)
     - I made a google sheet to help track variables.  Still hunting down why the criteria categories 
     - **dadgumit! There is no student subgroup information for the 2022 assessemnt.  I hope that this doesn't mean that I can show improvement for that year.
+- 01/06/23
+    - Data.nashville.gov would be a good place to look for shapefiles.  gis data would be another great place.
+    - Explored more info from categories.
+- 01/07/23
+    - Figured out the mapping of categories.
+| Previous     | Current                   | Description                                                 |
+|--------------|---------------------------|-------------------------------------------------------------|
+| n_on_track   | n_met_expectations        | Number of Students who's scores met expected criteria       |
+| pct_on_track | pct_met_expectations      | Percent of Students who's scores met expected criteria      |
+| n_mastered   | n_exceeded_expectations   | Number of Students who's scores exceeded expected criteria  |
+| pct_mastered | pct_exceeded_expectations | Percent of Students who's scores exceeded expected criteria |
