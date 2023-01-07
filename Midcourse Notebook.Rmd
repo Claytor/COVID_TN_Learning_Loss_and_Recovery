@@ -2,7 +2,9 @@
 title: "Midcourse Notebook"
 output: html_notebook
 ---
+
 # Import the libraries that we need to make the stuff work.
+
 ```{r Library Imports}
 library(ggplot2)
 library(tidyr)
@@ -13,10 +15,10 @@ library(sf)
 library(stringr)
 library(data.table)
 library(janitor)
-library(data.table)
 ```
 
 # Import the Data as CSV with readr
+
 ```{r .csv imports}
 district_2018 <- read_csv("data/district/district_2018.csv")
 district_2019 <- read_csv("data/district/district_2019.csv")
@@ -24,27 +26,42 @@ district_2021 <- read_csv("data/district/district_2021.csv")
 district_2022 <- read_csv("data/district/district_2022.csv")
 ```
 
-# Something kinda funky is going on.  There's a differeing amount of variable data for each column.
+# Something kinda funky is going on. There's a differeing amount of variable data for each column.
+
 ```{r Combined all datasets into one}
-EOC <- bind_rows(district_2018, district_2019, district_2021, district_2022)
+EOC_Pre <- bind_rows(district_2018, district_2019, district_2021) %>% 
+  rename(n_met_expectations = n_on_track, 
+         pct_met_expectations = pct_on_track,
+         n_exceeded_expectations = n_mastered,
+         pct_exceeded_expectations = pct_mastered,
+         student_group = subgroup)
+EOC_Merged <- bind_rows(EOC_Pre, district_2022)
 ```
- 
-# Look at it with the janitor.  It appears as if some of the criteria for mastery have changed over the years.
-Ill have to do some research to see if they are equivalent (Hopefully!)
-```{r}
+
+# Look at it with the janitor. It appears as if some of the criteria for mastery have changed over the years. I reached out to DOE, They explained which are equivalent.
+
+```{r groundskeeper_willie}
 groundskeeper_willie <- janitor::compare_df_cols(district_2018, district_2019, district_2021, district_2022)
 groundskeeper_willie
 ```
 
+# Merging Columns
+```{r}
+zTestUnite <- 
+  EOC %>% unite(test, n_on_track,n_met_expectations)
+```
+
 # Dropping Unneeded Columns
+
 ```{r Column remove}
 EOC_Drop <- EOC %>% 
   select(-c(participation_rate, student_group, enrolled, tested, valid_tests))
 ```
 
 #Describing columns
+
 ```{r Categorical Variables}
+dist_assess <- EOC %>% distinct(grade, subject, test)
 dist_assess <- EOC %>% distinct(grade, subject, test)
 
 ```
-
