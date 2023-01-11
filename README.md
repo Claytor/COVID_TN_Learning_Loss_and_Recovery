@@ -63,15 +63,19 @@ At the current time, my known issues are aligning disparate datasets, Determinin
 
 - [ ] See if you can find geospatial data for districts and if there are shapefiles available for poential map.
 
-- [ ] Develop Data Dictionary For reference
+- [x] Develop Data Dictionary For reference
 
 - [ ] Create Initial Shiny App
 
 ## Data Dictionary
 
-| Term | Definition |
-| ---- | ---------- |
-|      |            |
+| Term                  | Definition                                                                                                                                                                                                             |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Below                 | Performance at this level demonstrates that the student has a minimal understanding and has a nominal ability to apply the grade/course-level knowledge and skills defined by the Tennessee Academic Standards         |
+| Approaching           | Performance at this level demonstrates that the student is approaching understanding and has a partial ability to apply the grade/course-level knowledge and skills defined by the Tennessee Academic Standards.       |
+| Met Expectations      | Performance at this level demonstrates that the student has a comprehensive understanding and has a thorough ability to apply the grade/course-level knowledge and skills defined by the Tennessee Academic Standards. |
+| Exceeded Expectations | Performance at this level demonstrates that the student has an extensive understanding and has an expert ability to apply the grade/course-level knowledge and skills defined by the Tennessee Academic Standards.     |
+| Met Exceeded          | The combination of Met Expectations and Exceeded Expectations.                                                                                                                                                         |
 
 ## Clatyor's Log
 
@@ -104,12 +108,13 @@ At the current time, my known issues are aligning disparate datasets, Determinin
   
   - Figured out the mapping of categories.
     
-    | Previous     | Current                   | Description                                                 |
-    | ------------ | ------------------------- | ----------------------------------------------------------- |
-    | n_on_track   | n_met_expectations        | Number of Students who's scores met expected criteria       |
-    | pct_on_track | pct_met_expectations      | Percent of Students who's scores met expected criteria      |
-    | n_mastered   | n_exceeded_expectations   | Number of Students who's scores exceeded expected criteria  |
-    | pct_mastered | pct_exceeded_expectations | Percent of Students who's scores exceeded expected criteria |
+    | Previous        | Current                   | Description                                                         |
+    | --------------- | ------------------------- | ------------------------------------------------------------------- |
+    | n_on_track      | n_met_expectations        | Number of Students who's scores met expected criteria               |
+    | pct_on_track    | pct_met_expectations      | Percent of Students who's scores met expected criteria              |
+    | n_mastered      | n_exceeded_expectations   | Number of Students who's scores exceeded expected criteria          |
+    | pct_mastered    | pct_exceeded_expectations | Percent of Students who's scores exceeded expected criteria         |
+    | pct_on_mastered | pct_met_exceeded          | Percent of Students who's scores met and exceeded expected criteria |
   
   - Merged all testing data so that previous is mapped to current for category names.
   
@@ -127,6 +132,18 @@ At the current time, my known issues are aligning disparate datasets, Determinin
   
   - I need to have my primary filters done tonight.  Although I would love to persue infomation about different demographics, The current project pacing dictates that I focus on the "All Students, All Tests" filter.  I still really want to find demographic statistics.  That might have to wait for another time. 
   
-  - I removed student demographic information and focused on the aggregate statistics embedded in the dataset.  I'm also removing the "MSAA/Alt-Science/Social Studies" assessment from the results.  There are too many missing variables.
+  - I removed student demographic information and focused on the aggregate statistics embedded in the dataset. 
   
-  - 
+  - I noticed that there were `*` and `**` in some fields.
+    
+    - The asterisks are values that are **suppressed**.
+      
+      - `*` = The number of **valid** test scores is less than 10.
+      
+      - `**` = Any individual proficiency level is <u>less than</u> **1%** or <u>greater than</u> **99%** at the district level.
+  
+  - It may be best for me to eliminate tests that have high levels of **suppression**
+    
+    - MSAA/Alt-Science/Social Studies
+    
+    - [ ]  I need to start here next time !!!
