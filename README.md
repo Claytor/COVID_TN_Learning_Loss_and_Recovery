@@ -57,15 +57,13 @@ At the current time, my known issues are aligning disparate datasets, Determinin
 
 - [x] Drop unneccesary columns (n_below, n_approaching, n_met_expectations, n_exceeded_expectations, pct_on_mastered etc.).
 
-- [ ] See where you could eliminate cells through creating demographic summaries (similar to "All Grades" and "All Tests").
-
 - [ ] Create pivot tables to perform impact/loss (pre, intra, post).
 
 - [ ] Save Dataset as RDS
 
-- [ ] Develop Data Dictionary For reference
-
 - [ ] See if you can find geospatial data for districts and if there are shapefiles available for poential map.
+
+- [ ] Develop Data Dictionary For reference
 
 - [ ] Create Initial Shiny App
 
@@ -78,23 +76,32 @@ At the current time, my known issues are aligning disparate datasets, Determinin
 ## Clatyor's Log
 
 - **01/03/23**
+  
   - I have a copy of all of my datasets.  I am looking at district-wide data from 2018 - 2022 am in in the process of merging them right now.  I had a chance to speak with Neda about my project.  She recommended that it would be a good idea to use my readme as a log of sorts.
   - Looks like I have some homework.  There are different titles for mastery criteria across datasets.   It appears as if some of the criteria for mastery have changed over the years.
   - Ill have to do some research to see if they are equivalent (Hopefully!)
+
 - **01/04/23**
+  
   - I need to find out how to merge the correct columns.
   - How do I find the Increases/Decreases year-over-year for each district?
+
 - **01/05/23**
+  
   - Michael reccomended that I use the "povit wider funciton"
   - Conference with Rohit.  Pretty chill dude -awesome hat.  I told him that the feature that I want the most (geospatial mapping for school districts) might be beyond the scope of this project -but would be friggin' sweet!  He said that I could ask for help if I got to that point.
   - Removed columns not needed for analysis (participation_rate, student_group, enrolled, tested, valid_tests)
   - Added code to group categorical testing data (grade, subject, test)
   - I made a google sheet to help track variables.  Still hunting down why the criteria categories 
   - **dadgumit!** There is no student subgroup information for the 2022 assessemnt.  I hope that this doesn't mean that I can show improvement for that year.
+
 - **01/06/23**
+  
   - Data.nashville.gov would be a good place to look for shapefiles.  gis data would be another great place.
   - Explored more info from categories.
+
 - **01/07/23**
+  
   - Figured out the mapping of categories.
     
     | Previous     | Current                   | Description                                                 |
@@ -103,7 +110,23 @@ At the current time, my known issues are aligning disparate datasets, Determinin
     | pct_on_track | pct_met_expectations      | Percent of Students who's scores met expected criteria      |
     | n_mastered   | n_exceeded_expectations   | Number of Students who's scores exceeded expected criteria  |
     | pct_mastered | pct_exceeded_expectations | Percent of Students who's scores exceeded expected criteria |
+  
   - Merged all testing data so that previous is mapped to current for category names.
+  
   - Also had to rename the student demographic columns.
 
-  
+- 01/10/23
+  
+  - Neda gave me some good ideas for finding a shape file boundaries.
+    
+    - [Geographic](https://nces.ed.gov/programs/edge/Geographic/DistrictBoundaries)
+    
+    - [School District Boundaries](https://www.census.gov/programs-surveys/sdrp/updates/school-district-boundaries.html)
+    
+    - [TIGER/Line Shapefile, 2019, Series Information for the Current Elementary School Districts State-based Shapefile - Catalog](https://catalog.data.gov/dataset/tiger-line-shapefile-2019-series-information-for-the-current-elementary-school-districts-state-)
+  
+  - I need to have my primary filters done tonight.  Although I would love to persue infomation about different demographics, The current project pacing dictates that I focus on the "All Students, All Tests" filter.  I still really want to find demographic statistics.  That might have to wait for another time. 
+  
+  - I removed student demographic information and focused on the aggregate statistics embedded in the dataset.  I'm also removing the "MSAA/Alt-Science/Social Studies" assessment from the results.  There are too many missing variables.
+  
+  - 
