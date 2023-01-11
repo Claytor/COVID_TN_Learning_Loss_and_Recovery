@@ -32,36 +32,33 @@ groundskeeper_willie
 
 # I reached out to DOE, They explained which columns are equivalent.
 ```{r Combined all datasets into one}
-assessments_Pre <- bind_rows(district_2018, district_2019, district_2021) %>% 
+assessments_pre <- bind_rows(district_2018, district_2019, district_2021) %>% 
   rename(n_met_expectations = n_on_track, 
          pct_met_expectations = pct_on_track,
          n_exceeded_expectations = n_mastered,
          pct_exceeded_expectations = pct_mastered,
-         student_group = subgroup)
-assessments_Merged <- bind_rows(assessments_Pre, district_2022)
+         student_group = subgroup,
+         pct_met_exceeded = pct_on_mastered)
+assessments_merged <- bind_rows(assessments_pre, district_2022)
 ```
 
 # Dropping Unneeded Columns
 ```{r Column remove}
-assessments_Drop <- assessments_Merged %>% 
+assessments_dropped <- assessments_merged %>% 
   select(-c( n_below, n_approaching, n_met_expectations, n_exceeded_expectations, participation_rate, enrolled, tested, valid_tests))
 ```
 
 #Describing columns
 
 ```{r Categorical Variables}
-dist_assess <- assessments %>% distinct(grade, subject, test)
-dist_assess <- assessments %>% distinct(grade, subject, test)
+dist_assess <- EOC %>% distinct(grade, subject, test)
+dist_assess <- EOC %>% distinct(grade, subject, test)
 ```
 
-#All student_group all grade
-```{r}
+#Removing Student Demographic information 
+```{r filtered for all students in all grades. Removed "MSAA/Alt-Science/Social Studies" test}
+assessments <- assessments_dropped %>% 
+  filter(student_group == "All Students", grade == "All Grades", 
+         !test == "MSAA/Alt-Science/Social Studies") %>% 
+  select(-c())
 ```
-
-
-```{r}
-assessments_All <- 
-  assessments_Drop z%>% 
-    filter(student_group == "All Students" & grade == "All Grades")
-```
-
