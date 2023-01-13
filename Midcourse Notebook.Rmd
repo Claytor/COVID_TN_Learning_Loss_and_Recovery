@@ -48,17 +48,59 @@ assessments_dropped <- assessments_merged %>%
   select(-c( n_below, n_approaching, n_met_expectations, n_exceeded_expectations, participation_rate, enrolled, tested, valid_tests))
 ```
 
-#Describing columns
-
-```{r Categorical Variables}
-dist_assess <- EOC %>% distinct(grade, subject, test)
-dist_assess <- EOC %>% distinct(grade, subject, test)
-```
-
 #Removing Student Demographic information 
 ```{r filtered for all students in all grades. Removed "MSAA/Alt-Science/Social Studies" test}
 assessments <- assessments_dropped %>% 
-  filter(student_group == "All Students", grade == "All Grades", 
-         !test == "MSAA/Alt-Science/Social Studies") %>% 
-  select(-c())
+  filter(student_group == "All Students", grade == "All Grades") %>% 
+  select(-c(grade, student_group))
 ```
+
+#Describing columns
+```{r Categorical Variables}
+systems <- assessments %>% distinct(system_name)
+test_subjects <- assessments %>% distinct(test, subject)
+
+```
+
+#Filter Dataset for suppressed scores
+```{r All Suppressed Scores}
+suppression_all <- assessments %>% 
+  filter(pct_below %in% c("*", "**"), 
+        pct_approaching %in% c("*", "**"),
+        pct_met_expectations %in% c("*", "**"),
+        pct_exceeded_expectations %in% c("*", "**")) %>%
+  group_by(system_name, test)
+```
+
+#Looking for Assessments with high suppression rates for rates of score
+reporting.  If one subject is suppressed, all will be.
+```{r Suppressed completion rate}
+suppression_completion <- suppression_all %>% 
+  filter(pct_below %in% c("*")) %>% 
+  transmute(test, subject) %>% 
+  group_by(subject, .groups = test) %>% 
+  summarise(count = n())
+```
+
+#Suppression for Proficiency Outliess
+```{r Suppressed Outliers x<1% or x>99%}
+suppression_outliers <- suppression_all %>% 
+  filter(pct_below %in% c("**")) %>% 
+  transmute(system_name) %>% 
+  group_by(system_name) %>% 
+  summarise(count = n())
+```
+
+
+```{r}
+summary <- suppression_completion %>%
+    group_by(system_name) %>%
+    summarize(count_distinct = n_distinct(subject))
+```
+
+#Filter out Tests and Districts
+```{r}
+ #!test == "MSAA/Alt-Science/Social Studies"
+```
+
+

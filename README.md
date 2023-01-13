@@ -146,4 +146,23 @@ At the current time, my known issues are aligning disparate datasets, Determinin
     
     - MSAA/Alt-Science/Social Studies
     
-    - [ ]  I need to start here next time !!!
+    - [x] I need to start here next time !!!
+
+- 01/12/2023
+  
+  - When filtering for suppression, I found that 1010 observations were suppressed.
+  
+  - 204 Observations were suppressed for low numbers of valid scores.
+  
+  - Created filters for both kinds of suppression.
+  
+  - Began identifying categories that can be dropped from the dataset.
+  
+  - Tests that gotta go 
+
+| Value | Column |
+| ----- | ------ |
+| MSAA  |        |
+|       |        |
+|       |        |
+|       |        |
