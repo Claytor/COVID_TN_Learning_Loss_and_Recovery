@@ -101,7 +101,23 @@ assessments <- assessments %>%
          pct_below = as.numeric(pct_below), 
          pct_approaching = as.numeric(pct_approaching),
          pct_met_expectations = as.numeric(pct_met_expectations),
-         pct_exceeded_expectations = as.numeric(pct_exceeded_expectations))
+         pct_exceeded_expectations = as.numeric(pct_exceeded_expectations)) %>% 
+   group_by(system_name, test, subject) %>%
+    arrange(year) %>% 
+    mutate(Below.Lag = pct_below - lag(pct_below), 
+           Approaching.Lag = pct_approaching - lag(pct_approaching),
+           Met.Lag = pct_met_expectations - lag(pct_met_expectations),
+           Exceeded.Lag = pct_exceeded_expectations -lag(pct_exceeded_expectations),
+           Met.Exceeded.Lag = pct_met_exceeded - lag(pct_met_exceeded)) %>%
+  rename(Year = year,
+         System = system_name,
+         Subject = subject,
+         Test = test ,
+         Below = pct_below,
+         Approaching = pct_approaching,
+         Met = pct_met_expectations,
+         Exceeded = pct_exceeded_expectations,
+         Met.Exceeded = pct_met_exceeded)
 ```
 # Visualization Variables
 ```{r Input Select }
@@ -110,82 +126,52 @@ input_test <- 'EOC'
 input_subject <- 'Geometry'
 ```
 
-# This is why we pivot
-```{r Absolutely not the right way to do this}
-assessments %>% 
-  filter(system_name == input_system_name, test == input_test, subject == input_subject) %>% 
-  ggplot(aes(x=year)) + 
-  geom_line(aes(y = pct_below), color = "red") +
-  geom_line(aes(y = pct_approaching), color = "orange") +
-  geom_line(aes(y = pct_met_expectations), color = "yellow") +
-  geom_line(aes(y = pct_exceeded_expectations), color = "green") +
-  geom_point(aes(y = pct_below)) +
-  geom_point(aes(y = pct_approaching)) +
-  geom_point(aes(y = pct_met_expectations)) +
-  geom_point(aes(y = pct_exceeded_expectations)) +
-  ggtitle(paste(input_system_name, input_test, "Scores for", input_subject)) +
-  labs(x ="Year", y = "Percent") +
-  theme(legend.position = "top")
-```
 # Line Chart !
 ```{r Line Chart}
 assessments %>% 
-    filter(system_name == input_system_name, test == input_test, subject == input_subject) %>% 
-    pivot_longer(pct_below:pct_approaching:pct_met_expectations:pct_exceeded_expectations:pct_met_exceeded, names_to = 'level', values_to = 'score') %>% 
-    ggplot(aes(x=year, y=score, color = level)) + 
-  geom_line(aes(y = score)) + 
-  geom_point(aes(y = score)) +
+    filter(System == input_system_name, Test == input_test, Subject == input_subject) %>% 
+    pivot_longer(Below:Approaching:Met:Exceeded:Met.Exceeded, names_to = 'Level', values_to = 'Score') %>% 
+    ggplot(aes(x=Year, y=Score, color = Level)) + 
+  geom_line(aes(y = Score)) + 
+  geom_point(aes(y = Score)) +
   ggtitle(paste(input_system_name, input_test, "Scores for", input_subject)) +
   labs(x ="Year", y = "Percent") +
-  geom_text(aes(data = score , label = score), check_overlap = TRUE, nudge_y = 2) +
+  geom_text(aes(data = Score , label = Score), check_overlap = TRUE, nudge_y = 2) +
   theme(legend.position = "top")
 ```
 
 # Another Graph of disruption
 ```{r Newgg Slope Graph Covid Disruption}
 assessments %>% 
-    filter(system_name == input_system_name, test == input_test, subject == input_subject) %>% 
-    pivot_longer(pct_below:pct_approaching:pct_met_expectations:pct_exceeded_expectations:pct_met_exceeded, names_to = 'level', values_to = 'score') %>%
-  filter(year %in% c("2019", "2021")) %>% 
-  mutate(year = as.character(year)) %>%
-  newggslopegraph(year, score, level,
+    filter(System == input_system_name, Test == input_test, Subject == input_subject) %>% 
+    pivot_longer(Below.Lag:Approaching.Lag:Met.Lag:Exceeded.Lag, names_to = 'Level', values_to = 'Score') %>%
+  filter(Year %in% c("2019", "2021")) %>% 
+  mutate(Year = as.character(Year)) %>%
+  newggslopegraph(Year, Score, Level,
                 Title = paste(input_system_name, input_test, "Scores for", input_subject),
                 SubTitle = "Learning Disrupiton",
                 Caption = "Please Work",
-                LineThickness = 2)   
+                LineThickness = 2) %>% 
+  
 ```
 
 # Stacked Bar
 ```{r Stacked Bar Chart}
 assessments %>%
 # Filter Desired Values
-    filter(
-      system_name == input_system_name,
-      test == input_test,
-      subject == input_subject) %>%
+  filter(System == input_system_name, Test == input_test, Subject == input_subject) %>%
 # Removing Met/Exceeded
-  select(
-    -c(pct_met_exceeded)) %>%
-  pivot_longer(
-    pct_below:pct_approaching:pct_met_expectations:pct_exceeded_expectations,
-               names_to = 'Level', 
-               values_to = 'Score') %>%
+  select(-c(Met.Exceeded)) %>%
+# Pivoting Longer
+   pivot_longer(Below:Approaching:Met:Exceeded, names_to = 'Level', values_to = 'Score')  %>%
 #Leveling testing categories
-  mutate(Level = factor(Level,
-                        levels = 
-                          c('pct_exceeded_expectations', 
-                            'pct_met_expectations', 
-                            'pct_approaching', 
-                            'pct_below'))) %>% 
+  mutate(Level = factor(Level, levels = c('Exceeded', 'Met', 'Approaching', 'Below'))) %>% 
 # Making a plot
-  ggplot(aes(x=Year, 
-             y=Score, 
-             fill = Level)) +
+  ggplot(aes(x=Year, y=Score, fill = Level)) +
 # Bar Plot
   geom_bar(stat = "identity") +
 # Plot Title  
-  ggtitle(
-    paste(input_system_name, input_test, "Scores for", input_subject)) +
+  ggtitle(paste(input_system_name, input_test, "Scores for", input_subject)) +
 # Plot Axis Labels
   labs(x ="Year", y = "Percent") +
   
