@@ -105,7 +105,7 @@ assessments <- assessments %>%
 ```
 # Visualization Variables
 ```{r Input Select }
-input_system_name <- 'Robertson County'
+input_system_name <- 'Davidson County'
 input_test <- 'EOC'
 input_subject <- 'Geometry'
 ```
@@ -167,4 +167,11 @@ assessments %>%
   labs(x ="Year", y = "Percent") +
   geom_text(aes(data = score , label = score), position = position_stack(vjust = .5), size = 3, color = "black")
 ```
-
+ # calculated columns
+```{r test of lag}
+assessments %>% 
+  group_by(system_name, test, subject) %>%
+  arrange(year) %>% 
+  mutate(fun_name = pct_below - lag(pct_below))
+```
+ 
