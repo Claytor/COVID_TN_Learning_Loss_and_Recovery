@@ -127,7 +127,7 @@ assessments %>%
   labs(x ="Year", y = "Percent") +
   theme(legend.position = "top")
 ```
-# One more time with pivot longer!
+# Line Chart !
 ```{r Line Chart}
 assessments %>% 
     filter(system_name == input_system_name, test == input_test, subject == input_subject) %>% 
@@ -157,21 +157,59 @@ assessments %>%
 
 # Stacked Bar
 ```{r Stacked Bar Chart}
-assessments %>% 
-    filter(system_name == input_system_name, test == input_test, subject == input_subject) %>%
-  select(-c(pct_met_exceeded)) %>% 
-    pivot_longer(pct_below:pct_approaching:pct_met_expectations:pct_exceeded_expectations, names_to = 'level', values_to = 'score') %>%
-  ggplot(aes(x=year, y=score, fill = level)) +
+assessments %>%
+# Filter Desired Values
+    filter(
+      system_name == input_system_name,
+      test == input_test,
+      subject == input_subject) %>%
+# Removing Met/Exceeded
+  select(
+    -c(pct_met_exceeded)) %>%
+  pivot_longer(
+    pct_below:pct_approaching:pct_met_expectations:pct_exceeded_expectations,
+               names_to = 'Level', 
+               values_to = 'Score') %>%
+#Leveling testing categories
+  mutate(Level = factor(Level,
+                        levels = 
+                          c('pct_exceeded_expectations', 
+                            'pct_met_expectations', 
+                            'pct_approaching', 
+                            'pct_below'))) %>% 
+# Making a plot
+  ggplot(aes(x=Year, 
+             y=Score, 
+             fill = Level)) +
+# Bar Plot
   geom_bar(stat = "identity") +
-  ggtitle(paste(input_system_name, input_test, "Scores for", input_subject)) +
+# Plot Title  
+  ggtitle(
+    paste(input_system_name, input_test, "Scores for", input_subject)) +
+# Plot Axis Labels
   labs(x ="Year", y = "Percent") +
-  geom_text(aes(data = score , label = score), position = position_stack(vjust = .5), size = 3, color = "black")
+  
+  geom_text(aes(data = Score , label = Score), position = position_stack(vjust = .5), size = 3, color = "black")
 ```
- # calculated columns
-```{r test of lag}
-assessments %>% 
-  group_by(system_name, test, subject) %>%
-  arrange(year) %>% 
-  mutate(fun_name = pct_below - lag(pct_below))
+ # Creating Difference Columns
+```{r Adding lag columns and cleaning up}
+lag_assessments <- 
+  assessments %>% 
+    group_by(system_name, test, subject) %>%
+    arrange(year) %>% 
+    mutate(Below.Lag = pct_below - lag(pct_below), 
+           Approaching.Lag = pct_approaching - lag(pct_approaching),
+           Met.Lag = pct_met_expectations - lag(pct_met_expectations),
+           Exceeded.Lag = pct_exceeded_expectations -lag(pct_exceeded_expectations),
+           Met.Exceeded.Lag = pct_met_exceeded - lag(pct_met_exceeded)) %>%
+  rename(Year = year,
+         System = system_name,
+         Subject = subject,
+         Test = test ,
+         Below = pct_below,
+         Approaching = pct_approaching,
+         Met = pct_met_expectations,
+         Exceeded = pct_exceeded_expectations,
+         Met.Exceeded = pct_met_exceeded)
 ```
  
