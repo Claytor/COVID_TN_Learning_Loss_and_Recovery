@@ -15,6 +15,7 @@ library(sf)
 library(stringr)
 library(data.table)
 library(janitor)
+library(CGPfunctions)
 ```
 
 # Import the Data as CSV with readr
@@ -102,12 +103,15 @@ assessments <- assessments %>%
          pct_met_expectations = as.numeric(pct_met_expectations),
          pct_exceeded_expectations = as.numeric(pct_exceeded_expectations))
 ```
-# Visualization Thingy
-```{r Line graph of }
-input_system_name <- 'Davidson County'
+# Visualization Variables
+```{r Input Select }
+input_system_name <- 'Wilson County'
 input_test <- 'EOC'
 input_subject <- 'Geometry'
+```
 
+# This is why we pivot
+```{r Absolutely not the right way to do this}
 assessments %>% 
   filter(system_name == input_system_name, test == input_test, subject == input_subject) %>% 
   ggplot(aes(x=year)) + 
@@ -123,3 +127,44 @@ assessments %>%
   labs(x ="Year", y = "Percent") +
   theme(legend.position = "top")
 ```
+# One more time with pivot longer!
+```{r Line Chart}
+assessments %>% 
+    filter(system_name == input_system_name, test == input_test, subject == input_subject) %>% 
+    pivot_longer(pct_below:pct_approaching:pct_met_expectations:pct_exceeded_expectations:pct_met_exceeded, names_to = 'level', values_to = 'score') %>% 
+    ggplot(aes(x=year, y=score, color = level)) + 
+  geom_line(aes(y = score)) + 
+  geom_point(aes(y = score)) +
+  ggtitle(paste(input_system_name, input_test, "Scores for", input_subject)) +
+  labs(x ="Year", y = "Percent") +
+  geom_label(aes(data = score , label = score), check_overlap = TRUE, nudge_y = 2) +
+  theme(legend.position = "top")
+```
+
+# Another Graph
+```{r Newgg Slope Graph}
+assessments %>% 
+    filter(system_name == input_system_name, test == input_test, subject == input_subject) %>% 
+    pivot_longer(pct_below:pct_approaching:pct_met_expectations:pct_exceeded_expectations:pct_met_exceeded, names_to = 'level', values_to = 'score') %>%
+  filter(year %in% c("2019", "2021")) %>% 
+  mutate(year = as.character(year)) %>%
+  newggslopegraph(year, score, level,
+                Title = paste(input_system_name, input_test, "Scores for", input_subject),
+                SubTitle = "Learning Disrupiton",
+                Caption = "Please Work",
+                LineThickness = 2)   
+```
+
+# Stacked Bar
+```{r Stacked Bar Chart}
+assessments %>% 
+    filter(system_name == input_system_name, test == input_test, subject == input_subject) %>%
+  select(-c(pct_met_exceeded)) %>% 
+    pivot_longer(pct_below:pct_approaching:pct_met_expectations:pct_exceeded_expectations, names_to = 'level', values_to = 'score') %>%
+  ggplot(aes(x=year, y=score, fill = level)) +
+  geom_bar(stat = "identity") +
+  ggtitle(paste(input_system_name, input_test, "Scores for", input_subject)) +
+  labs(x ="Year", y = "Percent") +
+  geom_text(aes(data = score , label = score))
+```
+
