@@ -48,12 +48,14 @@ assessments_merged <- bind_rows(assessments_pre, district_2022)
 ```
 
 # Dropping Unneeded Columns
+
 ```{r Column remove}
 assessments_dropped <- assessments_merged %>% 
   select(-c( n_below, n_approaching, n_met_expectations, n_exceeded_expectations, participation_rate, enrolled, tested, valid_tests))
 ```
 
 # Removing Student Demographic information
+
 ```{r filtered for all students in all grades}
 assessments <- assessments_dropped %>% 
   filter(student_group == "All Students", grade == "All Grades") %>% 
@@ -61,12 +63,14 @@ assessments <- assessments_dropped %>%
 ```
 
 # Describing columns
+
 ```{r Categorical Variables}
 systems <- assessments %>% distinct(system_name)
 test_subjects <- assessments %>% distinct(test, subject)
 ```
 
 # Filter Dataset for suppressed scores
+
 ```{r All Suppressed Scores}
 suppression_all <- assessments %>% 
   filter(pct_below %in% c("*", "**"), 
@@ -77,6 +81,7 @@ suppression_all <- assessments %>%
 ```
 
 # Looking for Assessments with high suppression rates for rates of score reporting. If one subject is suppressed, all will be.
+
 ```{r Suppressed completion rate}
 suppression_completion <- suppression_all %>% 
   filter(pct_met_exceeded %in% c("*")) %>% 
@@ -86,6 +91,7 @@ suppression_completion <- suppression_all %>%
 ```
 
 # Suppression for Proficiency Outliess
+
 ```{r Suppressed Outliers x<1% or x>99%}
 suppression_outliers <- suppression_all %>% 
   filter(pct_below %in% c("**")) %>% 
@@ -95,17 +101,20 @@ suppression_outliers <- suppression_all %>%
 ```
 
 # Warning: Coercing the assessments!
+
 ```{r}
 assessments <- assessments %>%  
   mutate(pct_met_exceeded = as.numeric(pct_met_exceeded), 
          pct_below = as.numeric(pct_below), 
          pct_approaching = as.numeric(pct_approaching),
          pct_met_expectations = as.numeric(pct_met_expectations),
-         pct_exceeded_expectations = as.numeric(pct_exceeded_expectations)) %>% 
+         pct_exceeded_expectations = as.numeric(pct_exceeded_expectations),
+         Below.Approaching = pct_below + pct_approaching) %>% 
    group_by(system_name, test, subject) %>%
     arrange(year) %>% 
     mutate(Below.Lag = pct_below - lag(pct_below), 
            Approaching.Lag = pct_approaching - lag(pct_approaching),
+           Below.Approaching.Lag = Below.Approaching - lag(Below.Approaching),
            Met.Lag = pct_met_expectations - lag(pct_met_expectations),
            Exceeded.Lag = pct_exceeded_expectations -lag(pct_exceeded_expectations),
            Met.Exceeded.Lag = pct_met_exceeded - lag(pct_met_exceeded)) %>%
@@ -119,18 +128,22 @@ assessments <- assessments %>%
          Exceeded = pct_exceeded_expectations,
          Met.Exceeded = pct_met_exceeded)
 ```
+
 # Visualization Variables
+
 ```{r Input Select }
 input_system_name <- 'Davidson County'
 input_test <- 'EOC'
-input_subject <- 'Geometry'
+input_subject <- 'Algebra II'
 ```
 
 # Line Chart !
+
 ```{r Line Chart}
 assessments %>% 
     filter(System == input_system_name, Test == input_test, Subject == input_subject) %>% 
     pivot_longer(Below:Approaching:Met:Exceeded:Met.Exceeded, names_to = 'Level', values_to = 'Score') %>% 
+  mutate(Level = factor(Level, levels = c('Met.Exceeded', 'Exceeded', 'Met', 'Approaching', 'Below'))) %>% 
     ggplot(aes(x=Year, y=Score, color = Level)) + 
   geom_line(aes(y = Score)) + 
   geom_point(aes(y = Score)) +
@@ -141,21 +154,23 @@ assessments %>%
 ```
 
 # Another Graph of disruption
+
 ```{r Newgg Slope Graph Covid Disruption}
 assessments %>% 
     filter(System == input_system_name, Test == input_test, Subject == input_subject) %>% 
-    pivot_longer(Below.Lag:Approaching.Lag:Met.Lag:Exceeded.Lag, names_to = 'Level', values_to = 'Score') %>%
-  filter(Year %in% c("2019", "2021")) %>% 
+    pivot_longer(Below:Approaching:Met:Exceeded, names_to = 'Level', values_to = 'Score') %>%
+  filter(Year %in% c("2019", "2021", "2022")) %>% 
   mutate(Year = as.character(Year)) %>%
   newggslopegraph(Year, Score, Level,
                 Title = paste(input_system_name, input_test, "Scores for", input_subject),
                 SubTitle = "Learning Disrupiton",
                 Caption = "Please Work",
-                LineThickness = 2) %>% 
+                LineThickness = 2)
   
 ```
 
 # Stacked Bar
+
 ```{r Stacked Bar Chart}
 assessments %>%
 # Filter Desired Values
@@ -163,7 +178,7 @@ assessments %>%
 # Removing Met/Exceeded
   select(-c(Met.Exceeded)) %>%
 # Pivoting Longer
-   pivot_longer(Below:Approaching:Met:Exceeded, names_to = 'Level', values_to = 'Score')  %>%
+  pivot_longer(Below:Approaching:Met:Exceeded, names_to = 'Level', values_to = 'Score')  %>%
 #Leveling testing categories
   mutate(Level = factor(Level, levels = c('Exceeded', 'Met', 'Approaching', 'Below'))) %>% 
 # Making a plot
@@ -174,28 +189,67 @@ assessments %>%
   ggtitle(paste(input_system_name, input_test, "Scores for", input_subject)) +
 # Plot Axis Labels
   labs(x ="Year", y = "Percent") +
-  
-  geom_text(aes(data = Score , label = Score), position = position_stack(vjust = .5), size = 3, color = "black")
+  theme(#legend.position = "top", 
+        plot.title = element_text(hjust = 0.5, size = rel(2)),
+        axis.title.y = element_text(size = rel(1.5)),
+        axis.title.x = element_text(size = rel(1.5)),
+        axis.ticks = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        legend.title.align=0.5) +
+  geom_text(aes(data = Score , label = Score), position = position_stack(vjust = .5), size = rel(3.5), color = "black")
 ```
- # Creating Difference Columns
-```{r Adding lag columns and cleaning up}
-lag_assessments <- 
-  assessments %>% 
-    group_by(system_name, test, subject) %>%
-    arrange(year) %>% 
-    mutate(Below.Lag = pct_below - lag(pct_below), 
-           Approaching.Lag = pct_approaching - lag(pct_approaching),
-           Met.Lag = pct_met_expectations - lag(pct_met_expectations),
-           Exceeded.Lag = pct_exceeded_expectations -lag(pct_exceeded_expectations),
-           Met.Exceeded.Lag = pct_met_exceeded - lag(pct_met_exceeded)) %>%
-  rename(Year = year,
-         System = system_name,
-         Subject = subject,
-         Test = test ,
-         Below = pct_below,
-         Approaching = pct_approaching,
-         Met = pct_met_expectations,
-         Exceeded = pct_exceeded_expectations,
-         Met.Exceeded = pct_met_exceeded)
+
+# Stacked Bar Version 2
+
+```{r Stacked Bar Chart With combined met/exceeded}
+assessments %>%
+# Filter Desired Values
+  filter(System == input_system_name, Test == input_test, Subject == input_subject) %>%
+# Removing Met/Exceeded
+  select(-c('Met', 'Exceeded')) %>% 
+# Pivoting Longer
+  pivot_longer(Below:Approaching:Met.Exceeded, names_to = 'Expectations', values_to = 'Score')  %>%
+#Leveling testing categories
+  mutate(Expectations = factor(Expectations, levels = c('Met.Exceeded', 'Approaching', 'Below'))) %>% 
+# Making a plot
+  ggplot(aes(x=Year, y=Score, fill = Expectations)) +
+# Bar Plot
+  geom_bar(stat = "identity") +
+#Changing legend
+scale_fill_discrete(labels=c('Met or Exceeded', 'Approaching', 'Below')) +
+# Plot Title  
+  ggtitle(paste(input_system_name, input_test, "Scores for", input_subject)) +
+# Plot Axis Labels
+  labs(x ="Year", y = "Percent") +
+  theme(#legend.position = "top", 
+        plot.title = element_text(hjust = 0.5, size = rel(2)),
+        axis.title.y = element_text(size = rel(1.5)),
+        axis.title.x = element_text(size = rel(1.5)),
+        axis.ticks = element_blank(),
+        axis.text.x = element_text(size = rel(1.5)),
+        axis.text.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        legend.title.align=0.5) +
+  geom_text(aes(data = Score , label = Score), position = position_stack(vjust = .5), size = rel(3.5), color = "black")
 ```
- 
+
+#Summary statistics
+
+```{r Summary statistics}
+assessments %>% 
+  group_by(System, Test, Subject, Year) %>%
+  pivot_longer(Below:Approaching:Met:Exceeded, names_to = 'Level', values_to = 'Score')  %>%
+  summarise(min = min(Score, na.rm = T),
+            q1 = quantile(Score, 0.25, na.rm = T),
+            median = median(Score, na.rm = T),
+            mean = mean(Score, na.rm = T),
+            q3 = quantile(Score, 0.75, na.rm = T),
+            max = max(Score, na.rm = T))
+
+```
