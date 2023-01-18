@@ -1,5 +1,15 @@
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
+  
+  # assessments_filtered <- reactive({assessments
+  #   if (input$System != "All"){system_filtered <- assessments %>%
+  #     filter(System == input$System)}})
+  # test_filtered <-reactive({assessments 
+  #   if (input$Test != "All"){test_filtered <- assessments %>%
+  #     filter(Test == input$Test)}})
+  # subject_filtered <- reactive({
+  #   if (input$Subject != "All"){subject_filtered <- assessments %>%
+  #     filter(Subject == input$Subject)}})
 
     output$distPlot <- renderPlot({
       assessments %>% 
