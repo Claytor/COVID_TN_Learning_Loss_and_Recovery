@@ -9,28 +9,25 @@ shinyUI(fluidPage(
     sidebarPanel(
       selectInput('System',
                   'Select a School District',
-                  choices = c('All', 
-                              assessments %>% 
-                                pull(System) %>% 
-                                unique() %>% 
-                                sort()
-                  )),
+                  choices = assessments %>%
+                    pull(System) %>%
+                    unique() %>%
+                    sort()
+                  ),
       selectInput('Test',
                   'Select an Assessment Type',
-                  choices = c('All', 
-                              assessments %>%
-                                pull(Test) %>% 
-                                unique() %>% 
-                                sort()
-                  )),
+                  choices = assessments %>%
+                    pull(Test) %>%
+                    unique() %>%
+                    sort()
+                  ),
       selectInput('Subject',
                   'Select the Subject',
-                  choices = c('All', 
-                              assessments %>%
-                                pull(Subject) %>% 
-                                unique() %>% 
-                                sort()
-                  ))
+                  choices = assessments %>%
+                    pull(Subject) %>%
+                    unique() %>%
+                    sort()
+                  )
     ),
     
         # Show a plot of the generated distribution
