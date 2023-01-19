@@ -1,7 +1,7 @@
 # Define server logic required to draw a histogram
-shinyServer(function(input, output, session) {
+shinyServer(function(input, output) {
   
-  output$assessmentselect <- renderUI({
+  output$Test <- renderUI({
     selectInput('Test',
                 'Select an Assessment Type',
                 choices = assessments %>%
@@ -10,8 +10,18 @@ shinyServer(function(input, output, session) {
                   unique() %>%
                   sort()
     )
-    
   })  
+  
+  output$Subject <- renderUI({
+    selectInput('Subject',
+                'Select the Subject',
+                choices = assessments %>%
+                  filter(Test == input$Test) %>% 
+                  pull(Subject) %>%
+                  unique() %>%
+                  sort()
+    )
+  })
   
   output$distPlot <- renderPlot({
       assessments %>% 
@@ -34,10 +44,10 @@ shinyServer(function(input, output, session) {
         labs(x ="Year", y = "Percent") +
         theme(#legend.position = "top", 
           plot.title = element_text(hjust = 0.5, size = rel(2)),
-          axis.title.y = element_text(size = rel(1.5)),
-          axis.title.x = element_text(size = rel(1.5)),
+          axis.title.y = element_text(size = rel(2)),
+          axis.title.x = element_text(size = rel(2)),
           axis.ticks = element_blank(),
-          axis.text.x = element_text(size = rel(1.5)),
+          axis.text.x = element_text(size = rel(2)),
           axis.text.y = element_blank(),
           panel.grid.major.y = element_blank(),
           panel.grid.minor.y = element_blank(),

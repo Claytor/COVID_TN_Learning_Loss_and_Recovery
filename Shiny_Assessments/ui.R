@@ -16,14 +16,8 @@ shinyUI(fluidPage(
                   ),
       
      
-      uiOutput('assessmentselect'),
-       selectInput('Subject',
-                  'Select the Subject',
-                  choices = assessments %>%
-                    pull(Subject) %>%
-                    unique() %>%
-                    sort()
-                  )
+      uiOutput('Subject'),
+      uiOutput('Test')
     ),
     
         # Show a plot of the generated distribution
