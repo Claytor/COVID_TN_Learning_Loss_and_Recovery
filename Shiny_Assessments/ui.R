@@ -15,14 +15,14 @@ shinyUI(fluidPage(
                     sort()
                   ),
       
-     
-      uiOutput('Subject'),
-      uiOutput('Test')
+      uiOutput('Test'),
+      uiOutput('Subject')
+      
     ),
     
         # Show a plot of the generated distribution
         mainPanel(
-            plotOutput("distPlot")
+            plotOutput("distPlot"))
         )
     )
-))
+)

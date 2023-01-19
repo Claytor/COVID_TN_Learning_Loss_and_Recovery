@@ -43,7 +43,7 @@ shinyServer(function(input, output) {
         # Plot Axis Labels
         labs(x ="Year", y = "Percent") +
         theme(#legend.position = "top", 
-          plot.title = element_text(hjust = 0.5, size = rel(3.5)),
+          plot.title = element_text(hjust = 0.5, size = rel(2.5)),
           axis.title.y = element_text(size = rel(2)),
           axis.title.x = element_text(size = rel(2)),
           axis.ticks = element_blank(),
@@ -58,7 +58,7 @@ shinyServer(function(input, output) {
           legend.text = element_text(size = rel(2)),
           text = element_text(size = 9)
         ) +
-        geom_text(aes(data = Score , label = Score), position = position_stack(vjust = .5), size = rel(3.5), color = "black")
+        geom_text(aes(data = Score , label = Score), position = position_stack(vjust = .5), size = rel(5), color = "black")
       })
 
 })
