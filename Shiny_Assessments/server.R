@@ -39,11 +39,11 @@ shinyServer(function(input, output) {
         #Changing legend
         scale_fill_discrete(labels=c('Met or Exceeded', 'Approaching', 'Below')) +
         # Plot Title  
-        ggtitle(paste(input$System, input$Test, "Scores for", input$Subject)) +
+        ggtitle(paste(input$System, '\n', input$Test, "Scores for", input$Subject)) +
         # Plot Axis Labels
         labs(x ="Year", y = "Percent") +
         theme(#legend.position = "top", 
-          plot.title = element_text(hjust = 0.5, size = rel(2)),
+          plot.title = element_text(hjust = 0.5, size = rel(3.5)),
           axis.title.y = element_text(size = rel(2)),
           axis.title.x = element_text(size = rel(2)),
           axis.ticks = element_blank(),
@@ -53,7 +53,11 @@ shinyServer(function(input, output) {
           panel.grid.minor.y = element_blank(),
           panel.grid.major.x = element_blank(),
           panel.grid.minor.x = element_blank(),
-          legend.title.align=0.5) +
+          legend.title.align=0.5,
+          legend.title = element_text(size = rel(2.2)),
+          legend.text = element_text(size = rel(2)),
+          text = element_text(size = 9)
+        ) +
         geom_text(aes(data = Score , label = Score), position = position_stack(vjust = .5), size = rel(3.5), color = "black")
       })
 
