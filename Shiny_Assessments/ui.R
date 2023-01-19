@@ -14,14 +14,10 @@ shinyUI(fluidPage(
                     unique() %>%
                     sort()
                   ),
-      selectInput('Test',
-                  'Select an Assessment Type',
-                  choices = assessments %>%
-                    pull(Test) %>%
-                    unique() %>%
-                    sort()
-                  ),
-      selectInput('Subject',
+      
+     
+      uiOutput('assessmentselect'),
+       selectInput('Subject',
                   'Select the Subject',
                   choices = assessments %>%
                     pull(Subject) %>%

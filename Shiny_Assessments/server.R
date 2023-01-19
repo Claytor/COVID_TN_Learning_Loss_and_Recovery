@@ -1,7 +1,19 @@
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
   
-    output$distPlot <- renderPlot({
+  output$assessmentselect <- renderUI({
+    selectInput('Test',
+                'Select an Assessment Type',
+                choices = assessments %>%
+                  filter(System == input$System) %>% 
+                  pull(Test) %>%
+                  unique() %>%
+                  sort()
+    )
+    
+  })  
+  
+  output$distPlot <- renderPlot({
       assessments %>% 
         filter(System == input$System, Test == input$Test, Subject == input$Subject) %>% 
         # Removing Met/Exceeded
