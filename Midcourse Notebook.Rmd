@@ -153,12 +153,13 @@ assessments %>%
   theme(legend.position = "top")
 ```
 
-# Another Graph of disruption
+# Slope Graph
 
 ```{r Newgg Slope Graph Covid Disruption}
 assessments %>% 
     filter(System == input_system_name, Test == input_test, Subject == input_subject) %>% 
-    pivot_longer(Below:Approaching:Met:Exceeded, names_to = 'Level', values_to = 'Score') %>%
+  select(-c(Met.Lag, Exceeded.Lag, Below.Lag)) %>% 
+    pivot_longer(Below.Approaching.Lag:Met.Exceeded.Lag, names_to = 'Level', values_to = 'Score') %>%
   filter(Year %in% c("2019", "2021", "2022")) %>% 
   mutate(Year = as.character(Year)) %>%
   newggslopegraph(Year, Score, Level,
